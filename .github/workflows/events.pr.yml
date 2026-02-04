@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  validate-pr:
+  pr_setup:
     runs-on: ubuntu-latest
     outputs:
       semver: ${{ steps.gitversion.outputs.fullSemVer }}
@@ -35,10 +35,17 @@ jobs:
           echo "Major: ${{ steps.gitversion.outputs.major }}"
           echo "Minor: ${{ steps.gitversion.outputs.minor }}"
           echo "Patch: ${{ steps.gitversion.outputs.patch }}"
-          
+
+  pr_capstone_check:
+    runs-on: ubuntu-latest
+    needs: pr-setup # Starts after validate-pr finishes
+    steps:
+      - name: Hello World
+        run: echo "hello world"
+        
   create-release:
     runs-on: ubuntu-latest
-    needs: validate-pr  # Wait for the first job to finish
+    needs: [pr_capstone_check, pr_setup]
     if: github.event.pull_request.merged == true # Standard safeguard
     steps:
       - name: Create Release
