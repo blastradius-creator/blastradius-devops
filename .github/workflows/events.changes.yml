@@ -11,7 +11,7 @@ on:
     branches: [main]
 
 jobs:
-  pr_setup:
+  setup:
     runs-on: ubuntu-latest
     outputs:
       fullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}
@@ -43,7 +43,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: [pr_setup]
+    needs: [setup]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -71,7 +71,7 @@ jobs:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/ctr/pysnow:latest
-            ${{ steps.login-ecr.outputs.registry }}/ctr/pysnow:${{ needs.pr_setup.outputs.semver }}
+            ${{ steps.login-ecr.outputs.registry }}/ctr/pysnow:${{ needs.setup.outputs.semver }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
         env:
@@ -83,7 +83,7 @@ jobs:
 
   create_release:
     runs-on: ubuntu-latest
-    needs: [pr_setup, build]
+    needs: [setup, build]
     permissions:
       contents: write
     steps:
@@ -91,18 +91,18 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'  #dont create releases unless its running directly on the main branch
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ needs.pr_setup.outputs.semver }}
-          name: Release ${{ needs.pr_setup.outputs.semver }}
+          tag_name: ${{ needs.setup.outputs.semver }}
+          name: Release ${{ needs.setup.outputs.semver }}
           draft: false
           prerelease: true
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
-  pr_capstone_check:
+  capstone_check:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    needs: [pr_setup, create_release]
+    needs: [setup, create_release]
     steps:
       - name: "What is this job?"
         run: echo "This job is a point of extensibility that can be enhanced to provide additional checks outside of 1st class Branch Rulesets. This can be helpful for cross-checking work item queries, QA results, etc..."
