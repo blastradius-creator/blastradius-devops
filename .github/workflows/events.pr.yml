@@ -11,7 +11,8 @@ jobs:
   pr_setup:
     runs-on: ubuntu-latest
     outputs:
-      semver: ${{ steps.gitversion.outputs.fullSemVer }}
+      fullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}
+      semver: ${{ steps.gitversion.outputs.MajorMinorPatch }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -35,6 +36,7 @@ jobs:
           echo "Major: ${{ steps.gitversion.outputs.major }}"
           echo "Minor: ${{ steps.gitversion.outputs.minor }}"
           echo "Patch: ${{ steps.gitversion.outputs.patch }}"
+          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.MajorMinorPatch }}"
         
   create_release:
     runs-on: ubuntu-latest
