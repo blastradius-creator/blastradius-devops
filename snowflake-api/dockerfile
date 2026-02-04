@@ -19,5 +19,9 @@ RUN pytest ${LAMBDA_TASK_ROOT}/tests/
 
 # Stage 3: Final Production Image
 # We go back to 'base' so we don't include pytest/httpx in the final image
-FROM base AS final
+# FROM base AS final
+FROM test-stage AS final
+RUN pip uninstall -y pytest httpx && \
+    rm -rf ${LAMBDA_TASK_ROOT}/tests/
 CMD [ "main.handler" ]
+
