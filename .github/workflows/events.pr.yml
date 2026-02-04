@@ -51,8 +51,8 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'  #dont create releases unless its running directly on the main branch
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ needs.pr_setup.outputs.fullSemVer }}
-          name: Release ${{ needs.pr_setup.outputs.fullSemVer }}
+          tag_name: ${{ needs.pr_setup.outputs.semver }}
+          name: Release ${{ needs.pr_setup.outputs.semver }}
           draft: false
           prerelease: true
           generate_release_notes: true
