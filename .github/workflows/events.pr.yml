@@ -1,23 +1,25 @@
-name: Merge Group Validation
+name: Pull Request Validation
+
 on:
-  # Triggers the workflow when a merge queue is used to merge a pull request into the main branch.
-  merge_group:
+  pull_request:
+    # Triggers on the creation of a PR, new commits, or reopening
+    types: [opened, synchronize, reopened]
     branches:
       - main
 
 jobs:
-  build:
+  validate-pr:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: [actions/checkout@v4]
+        with:
+          # Fetches the PR merge commit specifically
+          ref: ${{ github.event.pull_request.head.sha }}
 
-      # Add your build, test, and other validation steps here.
-      # For example, you might run unit tests or lint your code.
-      - name: Example validation step
-        run: echo "Validating the merge group content..."
-
-      - name: Another example step
-        run: echo "This job would typically build and test your project."
-        
-        
+      - name: Run CI Suite
+        run: |
+          echo "Validating PR #${{ github.event.number }}..."
+          # Replace with your actual test/build commands
+          npm test || make test
