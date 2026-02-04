@@ -18,8 +18,20 @@ jobs:
           # Fetches the PR merge commit specifically
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Run CI Suite
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v1.1.1
+        with:
+          versionSpec: '5.x'
+
+      - name: Determine Version
+        id: gitversion # This ID allows you to reference outputs later
+        uses: gittools/actions/gitversion/execute@v1.1.1
+
+      - name: Print Version to Console
         run: |
-          echo "Validating PR #${{ github.event.number }}..."
-          # Replace with your actual test/build commands
-          npm test || make test
+          echo "Full SemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
+          echo "Major: ${{ steps.gitversion.outputs.major }}"
+          echo "Minor: ${{ steps.gitversion.outputs.minor }}"
+          echo "Patch: ${{ steps.gitversion.outputs.patch }}"
+      
+      
