@@ -62,9 +62,6 @@ jobs:
       # Sets up BuildKit (standard for modern Docker builds)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        
-      - name: Verify Build
-        run: docker image ls snowflake-api   
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
@@ -78,6 +75,9 @@ jobs:
             ${{ steps.login-ecr.outputs.registry }}/ctr/pysnow:${{ needs.pr_setup.outputs.semver }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Verify Build
+        run: docker image ls snowflake-api   
 
   create_release:
     runs-on: ubuntu-latest
