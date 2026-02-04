@@ -48,8 +48,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           # Use the output from the 'validate-pr' job
-          tag_name: v${{ needs.pr_setup.outputs.semver }}
-          name: Release v${{ needs.pr_setup.outputs.semver }}
+          tag_name: ${{ needs.pr_setup.outputs.semver }}
+          name: Release ${{ needs.pr_setup.outputs.semver }}
           draft: false
           prerelease: true
           generate_release_notes: true
