@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [pr_setup, create_release]
     steps:
-      - name: Hello World
-        run: echo "hello world"
+      - name: "What is this job?"
+        run: echo "This job is a point of extensibility that can be enhanced to provide additional checks outside of 1st class Branch Rulesets. This can be helpful for cross-checking work item queries, QA results, etc..."
       
       
