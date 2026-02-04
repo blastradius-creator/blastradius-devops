@@ -9,7 +9,8 @@ def test_read_test_endpoint():
     """Test the static /test endpoint to ensure the API starts."""
     response = client.get("/test")
     assert response.status_code == 200
-    assert response.json() == {"message": "If you see this, CURL and Mangum are working!"}
+    #assert response.json() == {"message": "If you see this, CURL and Mangum are working!"}
+    assert response.json() == {"message": "THIS WILL FAIL THE BUILD"}
 
 @patch("main.get_snowflake_connection")
 def test_get_snowflake_version_mock(mock_conn):
