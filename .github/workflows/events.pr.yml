@@ -35,17 +35,10 @@ jobs:
           echo "Major: ${{ steps.gitversion.outputs.major }}"
           echo "Minor: ${{ steps.gitversion.outputs.minor }}"
           echo "Patch: ${{ steps.gitversion.outputs.patch }}"
-
-  pr_capstone_check:
-    runs-on: ubuntu-latest
-    needs: pr_setup # Starts after validate-pr finishes
-    steps:
-      - name: Hello World
-        run: echo "hello world"
         
-  create-release:
+  create_release:
     runs-on: ubuntu-latest
-    needs: [pr_capstone_check, pr_setup]
+    needs: [pr_setup]
     if: github.event.pull_request.merged == true # Standard safeguard
     steps:
       - name: Create Release
@@ -59,5 +52,12 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  pr_capstone_check:
+    runs-on: ubuntu-latest
+    needs: [pr_setup, create_release]
+    steps:
+      - name: Hello World
+        run: echo "hello world"
       
       
