@@ -13,7 +13,7 @@ jobs:
     
     steps:
       - name: Checkout Code
-        uses: [actions/checkout@v4]
+        uses: actions/checkout@v4
         with:
           # Fetches the PR merge commit specifically
           ref: ${{ github.event.pull_request.head.sha }}
