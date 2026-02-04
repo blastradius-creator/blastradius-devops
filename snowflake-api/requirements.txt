@@ -3,3 +3,5 @@ uvicorn
 snowflake-connector-python>=4.2.0
 python-dotenv
 mangum>=0.20.0
+pytest
+httpx
