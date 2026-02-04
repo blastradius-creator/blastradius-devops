@@ -99,6 +99,7 @@ jobs:
           
   pr_capstone_check:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     needs: [pr_setup, create_release]
     steps:
       - name: "What is this job?"
