@@ -48,25 +48,36 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      
       # Sets up BuildKit (standard for modern Docker builds)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Build Docker Image
-        uses: docker/build-push-action@v6
-        with:
-          # Sets the "snowflake-api" folder as the build environment
-          context: ./snowflake-api
-          file: ./snowflake-api/Dockerfile
-          # Use 'load: true' to save the image to the local Docker engine
-          load: true
-          tags: snowflake-api:latest
-          # Use cache to speed up subsequent builds
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
+        
       - name: Verify Build
         run: docker image ls snowflake-api   
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./snowflake-api
+          file: ./snowflake-api/Dockerfile
+          push: true
+          # The 'registry' output contains your AWS account ID URI
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/ctr/pysnow:latest
+            ${{ steps.login-ecr.outputs.registry }}/ctr/pysnow:${{ needs.pr_setup.outputs.semver }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   create_release:
     runs-on: ubuntu-latest
