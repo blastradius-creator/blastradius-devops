@@ -69,12 +69,14 @@ jobs:
           context: ./snowflake-api
           file: ./snowflake-api/Dockerfile
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          # The 'registry' output contains your AWS account ID URI
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/ctr/pysnow:latest
             ${{ steps.login-ecr.outputs.registry }}/ctr/pysnow:${{ needs.pr_setup.outputs.semver }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+        env:
+            BUILDKIT_STEP_LOG_MAX_SIZE: 10485760
+            BUILDKIT_STEP_LOG_MAX_SPEED: 10485760          
 
       - name: Verify Build
         run: docker image ls snowflake-api   
