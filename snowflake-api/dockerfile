@@ -1,12 +1,23 @@
-# Use the official AWS Lambda base image for Python 3.13
-FROM public.ecr.aws/lambda/python:3.13
+# Stage 1: Base & Dependencies
+FROM public.ecr.aws/lambda/python:3.13 AS base
 
 # Install dependencies
 COPY requirements.txt ${LAMBDA_TASK_ROOT}
 RUN pip install -r requirements.txt
 
-# Copy function code
+# Copy function code and tests
 COPY main.py ${LAMBDA_TASK_ROOT}
+COPY tests/ ${LAMBDA_TASK_ROOT}/tests/
 
-# Set the CMD to your handler (file_name.function_name)
+# Stage 2: Test Execution
+# This stage will fail the build if tests do not pass
+FROM base AS test-stage
+# Set PYTHONPATH so pytest can find main.py in the task root
+ENV PYTHONPATH=${LAMBDA_TASK_ROOT}
+RUN pip install pytest httpx
+RUN pytest ${LAMBDA_TASK_ROOT}/tests/
+
+# Stage 3: Final Production Image
+# We go back to 'base' so we don't include pytest/httpx in the final image
+FROM base AS final
 CMD [ "main.handler" ]
