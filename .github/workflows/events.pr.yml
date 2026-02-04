@@ -6,6 +6,8 @@ on:
     types: [opened, synchronize, reopened]
     branches:
       - main
+  push:
+    branches: [main]
 
 jobs:
   pr_setup:
@@ -45,6 +47,7 @@ jobs:
       contents: write
     steps:
       - name: Create Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'  #dont create releases unless its running directly on the main branch
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.pr_setup.outputs.fullSemVer }}
