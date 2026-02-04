@@ -1,0 +1,21 @@
+name: Merge Group Validation
+on:
+  # Triggers the workflow when a merge queue is used to merge a pull request into the main branch.
+  merge_group:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Add your build, test, and other validation steps here.
+      # For example, you might run unit tests or lint your code.
+      - name: Example validation step
+        run: echo "Validating the merge group content..."
+
+      - name: Another example step
+        run: echo "This job would typically build and test your project."
